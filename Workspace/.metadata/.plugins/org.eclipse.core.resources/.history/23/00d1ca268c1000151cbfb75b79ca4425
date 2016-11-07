@@ -1,0 +1,83 @@
+package cs320.fe;
+
+import java.util.Date;
+
+public class LibraryBean {
+	
+	int id;
+	String type;
+	String name;
+	Date dateAdded;
+	boolean onLoan;
+	Date dateLent;
+	String borrower;
+	
+	public LibraryBean(int id, String type, String name, Date dateAdded,
+			boolean onLoan, Date dateLent, String borrower) {
+		super();
+		this.id = id;
+		this.type = type;
+		this.name = name;
+		this.dateAdded = dateAdded;
+		this.onLoan = onLoan;
+		this.dateLent = dateLent;
+		this.borrower = borrower;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getDateAdded() {
+		return dateAdded;
+	}
+
+	public void setDateAdded(Date dateAdded) {
+		this.dateAdded = dateAdded;
+	}
+
+	public boolean isOnLoan() {
+		return onLoan;
+	}
+
+	public void setOnLoan(boolean onLoan) {
+		this.onLoan = onLoan;
+	}
+
+	public Date getDateLent() {
+		return dateLent;
+	}
+
+	public void setDateLent(Date dateLent) {
+		this.dateLent = dateLent;
+	}
+
+	public String getBorrower() {
+		return borrower;
+	}
+
+	public void setBorrower(String borrower) {
+		this.borrower = borrower;
+	}
+
+}

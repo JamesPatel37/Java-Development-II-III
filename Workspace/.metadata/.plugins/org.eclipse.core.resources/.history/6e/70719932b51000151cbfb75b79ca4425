@@ -1,0 +1,28 @@
+package cs320.finalexam;
+
+public class QuotationBean {
+
+	String quatation;
+	String author;
+
+	public QuotationBean(String quatation, String author) {
+		super();
+		this.quatation = quatation;
+		this.author = author;
+	}
+	
+	public String getQuatation() {
+		return quatation;
+	}
+	public void setQuatation(String quatation) {
+		this.quatation = quatation;
+	}
+	public String getAuthor() {
+		return author;
+	}
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+	
+	
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;assignment07.NonRecursiveTraversal&apos; to &apos;NonRecursiveTreeTraversal&apos;&#x0D;&#x0A;- Original project: &apos;203&apos;&#x0D;&#x0A;- Original element: &apos;assignment07.NonRecursiveTraversal&apos;&#x0D;&#x0A;- Renamed element: &apos;assignment07.NonRecursiveTreeTraversal&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;NonRecursiveTraversal&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;assignment07{NonRecursiveTraversal.java[NonRecursiveTraversal" matchStrategy="1" name="NonRecursiveTreeTraversal" qualified="false" references="true" similarDeclarations="false" stamp="1433052413474" textual="false" version="1.0"/>
+</session>

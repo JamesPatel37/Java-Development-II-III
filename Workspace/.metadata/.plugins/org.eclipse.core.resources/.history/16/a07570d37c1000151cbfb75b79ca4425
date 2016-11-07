@@ -1,0 +1,53 @@
+package cs320.fe;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet("/AddMedia")
+public class AddMedia extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+
+    public AddMedia() {
+        super();
+
+    }
+
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String name = request.getParameter("name");
+		String select = request.getParameter("select");
+		
+		ArrayList<String> nameError = new ArrayList<String>();
+		ArrayList<String> typeError = new ArrayList<String>();
+		
+		
+		if(name.equals("")){
+			nameError.add("Please enter a valid name");
+		}
+		
+		if(select.equals("1")){
+			typeError.add("Please enter a valid type of media");
+		}
+		
+		request.setAttribute("nameError", nameError);
+		request.setAttribute("typeError", typeError);
+		
+		request.getRequestDispatcher("/AddMedia.jsp").forward(request, response);
+
+	}
+
+}

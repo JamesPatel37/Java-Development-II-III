@@ -1,0 +1,152 @@
+package cs320.fe;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet("/AddQuotationController")
+public class AddQuotationController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+    public AddQuotationController() {
+        super();
+
+    }
+    
+   
+    boolean isValidFname = true;
+    
+
+    
+public void init(ServletConfig config) throws ServletException {
+		
+		super.init( config );
+	 	 try
+	        {
+	            Class.forName( "com.mysql.jdbc.Driver" );
+	        }
+	        catch( ClassNotFoundException e )
+	        {
+	            throw new ServletException( e );
+	        }		
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+		ArrayList<QuotationBean> entries = new ArrayList<QuotationBean>();
+		
+		Connection c = null;
+		
+		 try
+	        {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+	         c = DriverManager.getConnection( url, username, password );
+	         Statement stmt = c.createStatement();
+	         ResultSet rs = stmt.executeQuery( "select * from quotations" );
+
+	         while( rs.next() ) {
+	        	 QuotationBean entry = new QuotationBean( rs.getString( "quotation" ), rs.getString( "author" ));
+	                entries.add( entry );
+	         }
+	        }
+	        catch( SQLException e )
+	        {
+	            throw new ServletException( e );
+	        }
+	        finally
+	        {
+	            try
+	            {
+	                if( c != null ) c.close();
+	            }
+	            catch( SQLException e )
+	            {
+	                throw new ServletException( e );
+	            }
+	        }
+		 
+		 request.setAttribute( "entries", entries );
+		 
+		 request.getRequestDispatcher( "/AddQuotationView.jsp" ).forward(request, response );	
+		
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		String quotation = request.getParameter("quotation");
+		String author = request.getParameter("author");
+		
+		
+		ArrayList<String> quotationError = new ArrayList<String>();
+		ArrayList<String> authorError = new ArrayList<String>();
+		
+		
+		if(quotation.equals(""))
+		{
+			quotationError.add("Please enter quotation by author");
+		}
+		
+		if(author.equals(""))
+		{
+			authorError.add("Please enter the name of the Author");
+		}
+					
+		if(!quotation.equals("") && !author.equals(""))
+		{
+		Connection c = null;
+		 try
+	       {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+	         
+	           String sql=" insert into quotations (quotation, author)  values(?,?)";
+	           c = DriverManager.getConnection( url, username, password );
+	           PreparedStatement ps=c.prepareStatement(sql);
+	           ps.setString(1, quotation);
+	           ps.setString(2, author);
+	
+	           ps.executeUpdate(); 
+	       }
+	       catch( SQLException e )
+	       {
+	           throw new ServletException( e );
+	       }
+	       finally
+	       {
+	           try
+	           {
+	               if( c != null ) c.close();
+	           }
+	           catch( SQLException e )
+	           {
+	               throw new ServletException( e );
+	           }
+	       }
+		}
+		else
+		{
+			request.setAttribute("quotationError", quotationError);
+			request.setAttribute("authorError",authorError);
+			
+		}			
+			doGet(request, response);
+		}
+
+}

@@ -1,0 +1,28 @@
+package cs320.finalexam;
+
+public class Item {
+
+	
+	String name;
+	double price;
+	String description;
+	//name – The name of the item (String, read-only)
+	//price – The cost of the item (double, read-write)
+	//description – A description of the item (String, read-only)
+	public String getName() {
+		return name;
+	}
+	
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	
+}

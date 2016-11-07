@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy package &apos;cs320.responses&apos; to &apos;CS320/src&apos;&#x0D;&#x0A;- Original project: &apos;webtest&apos;&#x0D;&#x0A;- Destination element: &apos;CS320/src&apos;&#x0D;&#x0A;- Original element: &apos;webtest/src/cs320.responses&apos;" description="Copy package" destination="=CS320/src" element1="/src&lt;cs320.responses" flags="589830" fragments="1" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyPackages" stamp="1432796358035" version="1.0"/>
+</session>

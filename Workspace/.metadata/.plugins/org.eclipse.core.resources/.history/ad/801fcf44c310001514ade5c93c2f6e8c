@@ -1,0 +1,11 @@
+package cs320.fe;
+
+public class QuotationBean {
+
+	int id;
+	String quotation;
+	String author;
+	
+
+	
+}

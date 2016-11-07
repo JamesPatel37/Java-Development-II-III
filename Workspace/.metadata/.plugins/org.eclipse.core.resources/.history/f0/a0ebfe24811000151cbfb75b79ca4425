@@ -1,0 +1,150 @@
+package cs320.fe;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.Statement;
+
+
+@WebServlet("/AddMedia")
+public class AddMedia extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+
+    public AddMedia() {
+        super();
+
+    }
+
+    public static java.sql.Date getCurrentDate() {
+    	java.util.Date today = new java.util.Date();
+    	return new java.sql.Date(today.getTime());
+    }
+    
+    public void init(ServletConfig config) throws ServletException {
+    	super.init(config);
+    	
+    	try {
+    		Class.forName("com.mysql.jdvc.driver");
+    	}
+    	catch(ClassNotFoundException e) {
+    		throw new ServletException(e);
+    	}
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		ArrayList<LibraryBean> entries = new ArrayList<LibraryBean>();
+		
+		Connection c = null;
+		
+		try {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+	         
+	         c = (Connection) DriverManager.getConnection(url, username, password);
+	         
+	         Statement stmt = (Statement) c.createStatement();
+	         
+	         ResultSet rs = stmt.executeQuery("SELECT * FORM Media");
+	         
+	         while(rs.next()) {
+	        	 LibraryBean entry = new LibraryBean(rs.getInt("id"), rs.getString("type"), rs.getString("name"), rs.getDate("dateAdded"), rs.getBoolean("onLoan"),
+	        			 rs.getDate("dateLent"), rs.getString("borrower"));	 
+	        	 entries.add(entry);
+	         }
+	         
+		} catch (SQLException e) {
+			throw new ServletException(e);
+		}
+		finally {
+			try{
+			if (c!=null)
+				c.close();
+			} catch (SQLException e) {
+				throw new ServletException(e);
+			}
+		}
+		
+		request.setAttribute("entries", entries);
+		request.getRequestDispatcher("/AddMedia.jsp").forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String name = request.getParameter("name");
+		String select = request.getParameter("select");
+		
+		ArrayList<String> nameError = new ArrayList<String>();
+		ArrayList<String> typeError = new ArrayList<String>();
+		
+		
+		if(name.equals("")){
+			nameError.add("Please enter a valid name");
+		}
+		
+		if(select.equals("1")){
+			typeError.add("Please enter a valid type of media");
+		}
+		
+		int in = 1;
+		if(!name.equals("") && !select.equals(""))
+		{
+			
+			Connection c = null;
+
+			try{
+				 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+				String user = "cs320stu72";
+				String password = "cOdJJKy!";
+				
+				c= (Connection) DriverManager.getConnection(url, user, password);
+				
+				PreparedStatement ps = (PreparedStatement) c.prepareStatement("insert into Media (name, tyoe, dateAdded, onLoan) values(?,?,?,?)");
+				
+				ps.setString(1, name);
+				ps.setString(2, select);
+				ps.setDate(3, getCurrentDate());
+				ps.setInt(4, in);
+				
+				ps.executeUpdate();
+			
+			} catch (SQLException e) {
+				throw new ServletException(e);
+			}
+			
+			finally
+			{
+				try{
+					if(c!=null)
+						c.close();
+				}
+				 catch(SQLException e) {
+					throw new ServletException(e);
+				}
+			}
+		} 
+		else
+		{			
+			request.setAttribute("nameError", nameError);
+			request.setAttribute("typeError", typeError);
+		}
+			doGet(request, response);
+	}
+
+}

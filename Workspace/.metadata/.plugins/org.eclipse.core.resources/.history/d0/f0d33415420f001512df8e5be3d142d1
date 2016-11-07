@@ -1,0 +1,42 @@
+package cs203.chap18;
+
+import java.util.Scanner;
+
+public class Fibonacci {
+
+	
+	public static void main(String[] args) {    xMethod(1234567);  }
+	public static void xMethod(double n) { if (n != 0) {      System.out.print(n);      xMethod(n / 10);    }  } }
+/*	public static void main(String[] args) {
+		xMethod(5);
+	}
+	
+	public static void xMethod(int n) {
+		
+		if(n>0) {
+			xMethod(n-1);
+
+			System.out.println(n + " ");
+		}
+	}*/
+	/*	
+		Scanner input = new Scanner(System.in);
+		
+		System.out.println("Enter a positive no.: ");
+		
+		int n = input.nextInt();
+		
+		System.out.println("The Fibanocci no at index " + n + " is: " + fib(n));
+	}
+	
+	public static long fib(int n) {
+		
+		if(n == 0)
+			return 0;
+		else if(n == 1)
+			return 1;
+		else 
+			return fib(n - 2) + fib(n - 1);
+	}*/
+		
+}

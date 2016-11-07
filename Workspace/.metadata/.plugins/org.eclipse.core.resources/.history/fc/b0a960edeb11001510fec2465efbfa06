@@ -1,0 +1,139 @@
+package cs320.midterm;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import cs320.midterm.*;
+
+
+@WebServlet("/midterm/StoreAdminServlet")
+public class StoreAdminServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public StoreAdminServlet() {
+        super();
+
+    }
+    
+    public void init( ServletConfig config ) throws ServletException
+    {
+        super.init( config );
+
+        ServletContext context = this.getServletContext();
+    	
+        ArrayList<InventoryItem> items = new ArrayList<InventoryItem>(); 
+    	
+        items.add(new InventoryItem(1,"Hersheys","Chocolate Bar", 20, 9));
+        items.add(new InventoryItem(2,"Resses","Chocolate Bar",20, 5));
+        items.add(new InventoryItem(3,"M&M", "Candy", 10, 4));
+
+        context.setAttribute( "items", items );
+    }
+
+
+	@SuppressWarnings("unchecked")
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+
+		ArrayList<InventoryItem> items = (ArrayList<InventoryItem>)getServletContext().getAttribute("items"); 
+		
+		try
+		{
+			int idx = Integer.parseInt(request.getParameter("id"));
+			for (int j = 0; j < items.size(); j++) {
+				if (items.get(j).getId() == idx)
+				{
+				items.remove(j);
+				break;
+				}
+			}
+		}
+		catch(Exception e)
+		{
+		}
+		
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		
+		out.println("<!doctype html>");
+		out.println("<html>");
+		out.println("<head>");
+		out.println("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>");
+		out.println("</head>");
+		out.println("<body>");
+		
+		out.println("<form action='StoreAdminServlet' method='get'>");
+		out.println("<div class='container'>");
+		out.println(" 	<hr>");
+		out.println("       <h1>Store Admin Serlet <small>CS320</small>");
+		out.println(" 		<p class='pull-right'>");
+		out.println("   	<a href='AddServlet' class='btn btn-success'>Add New Item</a></p></h1>");
+		out.println(" 	<hr/>");		
+
+		out.println("<h1>Current Inventory</h1><hr />");
+		out.println("<h4>Search</h4>");
+		out.println("   <input name='search' type='text' class='form-control' placeholder='Enter a search term! '<br /><br /> ");
+		out.println("<h4>Search Field</h4>");
+		out.println("	<select name='searchField' class='form-control'><br />");
+		out.println("		<option value='Name'>Name</option>");
+		out.println("		<option value='Description'>Description</option>");
+		out.println("		<option value='Price'>Price</option>");
+		out.println("		<option value='Quantity'>Quantity</option>");
+		out.println("		<option value='All'>All</option>");
+		out.println("	</select><br />");
+		out.println("<p class='text-center'> <input class='btn btn-default' type='submit' value='Search'></p><hr /><br />");
+
+		//Table
+		out.println("<table class='table table-striped'>");
+		out.println("<tr>");
+		out.println("<td>");
+		out.println("<th>Name</th>");
+		out.println("<th>Description</th>");
+		out.println("<th>Price</th>");
+		out.println("<th>Inventory</th>");
+		out.println("<th>Delete</th>");
+		//out.println("<th>Edit</th>");
+		for (InventoryItem item : items) 
+		{
+			out.println("<tr><td></td><td>" + item.getName() + "</td> <td> " + item.getDescription() + " </td> <td> " + item.getPrice() + " </td> <td> " + item.getQuantity() + " </td> <td> <a href='StoreAdminServlet?id="+item.getId()+"'> Delete </a> </td>");
+		}
+		out.println("</table>");
+
+		out.println("</form>");
+		out.println("</div>");
+		out.println("</body>");
+		out.println("</html>");
+
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		 i++;
+		 String name = request.getParameter("name").trim();
+		 String description = request.getParameter("des").trim(); 
+		 
+		 double price = Double.parseDouble(request.getParameter("price").trim());
+		 int quantity = Integer.parseInt(request.getParameter("quan").trim());
+		 
+		 InventoryItem item = new InventoryItem(i,name, description, price, quantity);
+		 
+		 ArrayList<InventoryItem> items = (ArrayList<InventoryItem>)getServletContext().getAttribute("items");
+ 
+		 items.add(item);
+		
+		 doGet(request, response);
+
+
+	}
+
+}

@@ -1,0 +1,108 @@
+package cs320.fe;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/QuotationController")
+public class QuotationController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+
+    public QuotationController() {
+        super();
+
+    }
+	
+public void init(ServletConfig config) throws ServletException {
+		
+		super.init( config );
+	 	 try
+	        {
+	            Class.forName( "com.mysql.jdbc.Driver" );
+	        }
+	        catch( ClassNotFoundException e )
+	        {
+	            throw new ServletException( e );
+	        }		
+	}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		ArrayList<QuotationBean> quotes  = new ArrayList<QuotationBean>();
+		
+		String search = request.getParameter("search");
+		
+		 if(search == null)
+		 {
+			 search = "";
+		 }	
+		
+		Connection c = null;
+		 try
+	        {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+		
+	         c = DriverManager.getConnection( url, username, password );
+	            Statement stmt = c.createStatement();
+	            
+
+	            ResultSet rs;
+
+	            if(!search.equals(""))
+	    		{
+	            	String que = ( new StringBuilder("SELECT * FROM quotations WHERE  ((quotation Like '%")).append(search).append("%') OR (author Like '%").append(search).append("%'))").toString();	
+	            	  rs = stmt.executeQuery( que);
+	    		}
+	            else
+	            {
+	            	   rs = stmt.executeQuery( "select * from quotations");
+	            }
+	           
+	            while( rs.next() )
+	            {
+	            	QuotationBean entry = new QuotationBean( rs.getString( "quotation" ), rs.getString( "author" ));
+	            	quotes.add( entry );
+	            }
+    
+	        }
+	        catch( SQLException e )
+	        {
+	            throw new ServletException( e );
+	        }
+	        finally
+	        {
+	            try
+	            {
+	                if( c != null ) c.close();
+	            }
+	            catch( SQLException e )
+	            {
+	                throw new ServletException( e );
+	            }
+	        }
+		 
+		 
+		 request.setAttribute( "quotes", quotes );
+		 
+		 request.getRequestDispatcher( "/QuotationView.jsp" ).forward(request, response );	
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		doGet(request, response);
+	}
+
+}

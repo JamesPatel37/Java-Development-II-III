@@ -1,0 +1,160 @@
+package cs320.finalexam;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet("/AddQuotationController")
+public class AddQuotationController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+    public AddQuotationController() {
+        super();
+
+    }
+    
+   
+    boolean isValidFname = true;
+    
+    private static java.sql.Date getCurrentDate() {
+	    java.util.Date today = new java.util.Date();
+	    return new java.sql.Date(today.getTime());
+	}
+    
+    
+@SuppressWarnings("unused")
+public void init(ServletConfig config) throws ServletException {
+		
+		super.init( config );
+		ArrayList<String> subjectLine = new ArrayList<String>();
+	 	ArrayList<LibraryBean> courseEntries = new ArrayList<LibraryBean>();
+	 	 try
+	        {
+	            Class.forName( "com.mysql.jdbc.Driver" );
+	        }
+	        catch( ClassNotFoundException e )
+	        {
+	            throw new ServletException( e );
+	        }		
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+		ArrayList<LibraryBean> entries = new ArrayList<LibraryBean>();
+		
+		Connection c = null;
+		
+		 try
+	        {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+	         c = DriverManager.getConnection( url, username, password );
+	         Statement stmt = c.createStatement();
+	         ResultSet rs = stmt.executeQuery( "select * from MediaLibrary" );
+
+	         while( rs.next() ) {
+	            	LibraryBean entry = new LibraryBean( rs.getInt( "Id" ), rs.getString( "Type" ), rs.getString( "Name" ), rs.getDate("DateAdded"), rs.getBoolean("OnLoan"), rs.getDate("DateBorrowed"), rs.getString("Borrower"));
+	                entries.add( entry );
+	         }
+	        }
+	        catch( SQLException e )
+	        {
+	            throw new ServletException( e );
+	        }
+	        finally
+	        {
+	            try
+	            {
+	                if( c != null ) c.close();
+	            }
+	            catch( SQLException e )
+	            {
+	                throw new ServletException( e );
+	            }
+	        }
+		 
+		 request.setAttribute( "entries", entries );
+		 
+		 request.getRequestDispatcher( "/AddMedia.jsp" ).forward(request, response );	
+		
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		String quotation = request.getParameter("quotation");
+		String author = request.getParameter("author");
+		
+		
+		ArrayList<String> quotationError = new ArrayList<String>();
+		ArrayList<String> authorError = new ArrayList<String>();
+		
+		
+		if(quotation.equals(""))
+		{
+			quotationError.add("Please enter a valid quotation");
+		}
+		
+		if(author.equals(""))
+		{
+			authorError.add("Please enter the name of the Author");
+		}
+					
+		int in=1;
+		if(!quotation.equals("") && !author.equals(""))
+		{
+		Connection c = null;
+		 try
+	       {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+	         
+	           String sql=" insert into quotations (quotation, author)  values(?,?)";
+	           c = DriverManager.getConnection( url, username, password );
+	           PreparedStatement ps=c.prepareStatement(sql);
+	           ps.setString(1, quotation);
+	           ps.setString(2, author);
+	
+	           ps.executeUpdate(); 
+	       }
+	       catch( SQLException e )
+	       {
+	           throw new ServletException( e );
+	       }
+	       finally
+	       {
+	           try
+	           {
+	               if( c != null ) c.close();
+	           }
+	           catch( SQLException e )
+	           {
+	               throw new ServletException( e );
+	           }
+	       }
+		}
+		else
+		{
+			request.setAttribute("quotationError", quotationError);
+			request.setAttribute("authorError",authorError);
+			
+		}			
+			doGet(request, response);
+		}
+
+}

@@ -1,0 +1,131 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core %>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>
+
+</head>
+<body>
+
+<div class='container'>
+
+<form action="Library" method="get">
+
+<hr>	
+		<h1>Library<br/><small>CS320</small></h1>
+		
+		<p class='lead'><input name='search' type='text' class='form-control'> <br/>
+		<input type = 'submit' name = 'submit' value = 'Search'/>
+</form>
+</div>
+
+ <table class="table table-bordered">
+  
+  <tr><th align = "center" colspan="7">Compact Discs</th></tr>
+  
+  	<tr> <th>ID</th> <th>Media Name</th> <th>Media Type</th> <th>Date Added</th> <th>On Loan</th> <th>Date Borrowed</th> <th>Borrower</th></tr>
+  	
+  	<c:forEach items="${cd}" var=item>
+  	
+  	<tr> 
+  		<td>item.id</td>
+  		<td>item.name</td>
+  		<td>item.type</td>
+  		<td>item.dateAdded</td>
+  		
+  		<td>
+  		<c:choose>
+  			<c:when test="${item.onLoan == true}"> YES</c:when>
+  			<c:otherwise> NO </c:otherwise>
+  		</c:choose>
+  		</td>
+  		
+  		<td>item.dateLent</td>
+  		
+  		<td>
+  			<c:choose>
+  				<c:when test="${item.borrower == null }"> <a href="Lend?id=${item.id}">Lend</a></c:when>
+  				<c:otherwise> ${item.borrower} <a href="ViewLibrary?returnId=${item.id}"> Return </a></c:otherwise>
+  			</c:choose>
+  		</td>	
+  		</tr>	
+  	 	</c:forEach>
+  
+
+</table>
+
+ <table class="table table-bordered">
+
+  <tr><th align = "center" colspan="7">Digital Video Discs</th></tr>
+
+  	<tr> <th>ID</th> <th>Media Name</th> <th>Media Type</th> <th>Date Added</th> <th>On Loan</th> <th>Date Borrowed</th> <th>Borrower</th></tr>
+  	
+  		<c:forEach items="${dvd}" var=item>
+  	
+  	<tr> 
+  		<td>item.id</td>
+  		<td>item.name</td>
+  		<td>item.type</td>
+  		<td>item.dateAdded</td>
+  		
+  		<td>
+  		<c:choose>
+  			<c:when test="${item.onLoan == true}"> YES</c:when>
+  			<c:otherwise> NO </c:otherwise>
+  		</c:choose>
+  		</td>
+  		
+  		<td>item.dateLent</td>
+  		
+  		<td>
+  			<c:choose>
+  				<c:when test="${item.borrower == null }"> <a href="Lend?id=${item.id}">Lend</a></c:when>
+  				<c:otherwise> ${item.borrower} <a href="Library?returnId=${item.id}"> Return </a></c:otherwise>
+  			</c:choose>
+  		</td>	
+  		</tr>	
+  	 	</c:forEach>
+
+</table>
+
+
+ <table class="table table-bordered">
+
+  <tr><th align = "center" colspan="7">Blue Ray Discs</th></tr>
+
+  	<tr> <th>ID</th> <th>Media Name</th> <th>Media Type</th> <th>Date Added</th> <th>On Loan</th> <th>Date Borrowed</th> <th>Borrower</th></tr>
+  	
+  		<c:forEach items="${blueray}" var=item>
+  	
+  	<tr> 
+  		<td>item.id</td>
+  		<td>item.name</td>
+  		<td>item.type</td>
+  		<td>item.dateAdded</td>
+  		
+  		<td>
+  		<c:choose>
+  			<c:when test="${item.onLoan == true}"> YES</c:when>
+  			<c:otherwise> NO </c:otherwise>
+  		</c:choose>
+  		</td>
+  		
+  		<td>item.dateLent</td>
+  		
+  		<td>
+  			<c:choose>
+  				<c:when test="${item.borrower == null }"> <a href="Lend?id=${item.id}">Lend</a></c:when>
+  				<c:otherwise> ${item.borrower} <a href="Library?returnId=${item.id}"> Return </a></c:otherwise>
+  			</c:choose>
+  		</td>	
+  		</tr>	
+  	 	</c:forEach>
+</table>
+
+
+</body>
+</html>

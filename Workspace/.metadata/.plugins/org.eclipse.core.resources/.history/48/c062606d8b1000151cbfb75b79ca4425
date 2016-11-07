@@ -1,0 +1,133 @@
+package cs320.fe;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import cs320.fe.LibraryBean;
+
+
+@WebServlet("/Library")
+public class ViewLibrary extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+
+    public ViewLibrary() {
+        super();
+
+    }
+
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		String search = request.getParameter("search");
+		
+		ArrayList<LibraryBean> cd = new ArrayList<LibraryBean>();
+		ArrayList<LibraryBean> dvd = new ArrayList<LibraryBean>();
+		ArrayList<LibraryBean> blueray = new ArrayList<LibraryBean>();
+
+		if(search == null) {
+			search="";
+		}
+		
+		Connection c = null;
+	
+		try{
+			String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+		
+	         c = DriverManager.getConnection( url, username, password );
+	            Statement stmt = c.createStatement();
+	            
+
+	         ResultSet rs;
+	         
+	         if(!search.equals("")) {
+	            String que= (new StringBuilder("SELECT * FROM Media WHERE (Type = 'CD') AND ((name Like '%")).append(search).append("%') OR (Borrower Like '%").append(search).append("%'))").toString();
+	        	 rs = stmt.executeQuery(que);
+	         }
+	         else {
+	        	 rs = stmt.executeQuery("SELECT * FROM Media WHERE (Type='CD')");
+	         }
+	         while( rs.next() )
+	            {
+	            	LibraryBean entry = new LibraryBean( rs.getInt( "id" ), rs.getString( "type" ), rs.getString( "name" ), rs.getDate("dateAdded"), rs.getBoolean("onLoan"), rs.getDate("dateLent"), rs.getString("borrower"));
+	                cd.add( entry );
+	            }
+	            
+	         
+	         
+	         ResultSet rsdvd;
+	         
+	         if(!search.equals("")) {
+	            String que= (new StringBuilder("SELECT * FROM Media WHERE (Type = 'DVD') AND ((name Like '%")).append(search).append("%') OR (borrower Like '%").append(search).append("%'))").toString();
+	            rsdvd = stmt.executeQuery(que);
+	         }
+	         else {
+	        	 rsdvd = stmt.executeQuery("SELECT * FROM Media WHERE (Type='DVD')");
+	         }
+	         while( rsdvd.next() )
+	            {
+	            	LibraryBean entry = new LibraryBean( rsdvd.getInt( "id" ), rsdvd.getString( "type" ), rsdvd.getString( "name" ), rsdvd.getDate("dateAdded"), rsdvd.getBoolean("onLoan"), rsdvd.getDate("dateLent"), rsdvd.getString("borrower"));
+	                dvd.add( entry );
+	            }
+	            
+	         ResultSet rsbr;
+	         
+	         if(!search.equals("")) {
+	            String que= (new StringBuilder("SELECT * FROM Media WHERE (Type = 'BlueRay') AND ((name Like '%")).append(search).append("%') OR (borrower Like '%").append(search).append("%'))").toString();
+	            rsbr = stmt.executeQuery(que);
+	         }
+	         else {
+	        	 rsbr = stmt.executeQuery("SELECT * FROM Media WHERE (Type='BlueRay')");
+	         }
+	         while( rsbr.next() )
+	            {
+	            	LibraryBean entry = new LibraryBean( rsbr.getInt( "id" ), rsbr.getString( "type" ), rsbr.getString( "name" ), rsbr.getDate("dateAdded"), rsbr.getBoolean("onLoan"), rsbr.getDate("dateLent"), rsbr.getString("borrower"));
+	                blueray.add( entry );
+	            }
+	         
+	         
+		}
+		catch (SQLException e) {
+			throw new ServletException(e);
+		}
+	
+		finally {
+			try {
+				if ( c!=null) {
+					c.close();
+				}
+			} catch (SQLException e) {
+				throw new ServletException(e);
+			}
+		
+		}
+		
+		request.setAttribute("cd", cd);
+		request.setAttribute("dvd", dvd);
+		request.setAttribute("blueray", blueray);
+		
+		request.getRequestDispatcher("/ViewLibrary.jsp").forward(request, response);
+
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		doGet(request, response);
+
+	}
+
+}

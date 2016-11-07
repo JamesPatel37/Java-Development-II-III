@@ -1,0 +1,110 @@
+package cs320.homework3;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import cs320.homework3.AirportBean;
+
+@WebServlet("/AirportLocator")
+public class ALController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+	public ALController() {
+        super();
+
+    }
+
+public void init(ServletConfig config) throws ServletException {
+		
+		super.init( config );
+	 	 try
+	        {
+	            Class.forName( "com.mysql.jdbc.Driver" );
+	        }
+	        catch( ClassNotFoundException e )
+	        {
+	            throw new ServletException( e );
+	        }		
+	}
+
+/*Note - To calculate nearby airports, 
+ * you should first find all zipcodes within the city.  
+Then, for each zipcode, find airports that are within the specified radius.  
+If an airport is within the specified radius of any zipcode in the city, it should be reported in the results.*/
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		ArrayList<AirportBean> zipcodes  = new ArrayList<AirportBean>();
+		
+		String city = request.getParameter("city");
+
+		 if(city == null)
+		 {
+			 city = "";
+		 }	
+		
+		Connection c = null;
+		 try
+	        {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+		
+	         c = DriverManager.getConnection( url, username, password );
+	            Statement stmt = c.createStatement();
+
+	            ResultSet rs;
+
+	            if(!city.equals(""))
+	    		{
+	            	String que = ( new StringBuilder("SELECT * FROM zipcodes WHERE  ((city Like '%")).append(city).append("%'))").toString();	
+	            	  rs = stmt.executeQuery( que);
+	    			       
+	            while( rs.next() )
+	            {
+	            	AirportBean entry = new AirportBean( rs.getInt("zip"), rs.getString( "city" ), rs.getString( "state" ),
+	            			rs.getDouble("latitude"), rs.getDouble("longitude"), rs.getInt("timezone"), rs.getBoolean("dst"));
+	            	zipcodes.add( entry );
+	            }
+	    		}
+	        }
+	        catch( SQLException e )
+	        {
+	            throw new ServletException( e );
+	        }
+	        finally
+	        {
+	            try
+	            {
+	                if( c != null ) c.close();
+	            }
+	            catch( SQLException e )
+	            {
+	                throw new ServletException( e );
+	            }
+	        }
+		 
+		 
+		 request.setAttribute( "zipcodes", zipcodes );
+		 
+		 request.getRequestDispatcher( "/AirportLocator.jsp" ).forward(request, response );	
+    }
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+
+	}
+
+}

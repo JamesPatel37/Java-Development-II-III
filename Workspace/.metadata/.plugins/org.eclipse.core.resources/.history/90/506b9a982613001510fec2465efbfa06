@@ -1,0 +1,168 @@
+package cs320.homework3;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet("/AirportLocator")
+public class AirportLocator extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+   
+    public AirportLocator() {
+        super();
+    }
+
+
+public void init(ServletConfig config) throws ServletException {
+		
+		super.init( config );
+	 	 try
+	        {
+	            Class.forName( "com.mysql.jdbc.Driver" );
+	        }
+	        catch( ClassNotFoundException e )
+	        {
+	            throw new ServletException( e );
+	        }		
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		ArrayList<AirportBean2> airports  = new ArrayList<AirportBean2>();
+		ArrayList<AirportBean> zipcodes  = new ArrayList<AirportBean>();
+		
+		String zipcode = request.getParameter("zipcode");
+		String radius = request.getParameter("radius");
+		
+		double lat = 0.0D;
+        double lon = 0.0D;
+        double r = 0.0D;
+
+		int zip = 0;
+		
+		 if(zipcode != null)
+		 {
+			 try 
+			 {
+				 zip = Integer.parseInt(zipcode);
+				 r = Double.parseDouble(radius);
+				 
+			 } catch(Exception e) {
+				 System.out.println(e);
+			 }
+		 }	
+		
+		 int size = 0;
+		Connection c = null;
+		 try
+	        {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu72";
+	         String username = "cs320stu72";
+	         String password = "cOdJJKy!";
+		
+	         c = DriverManager.getConnection( url, username, password );
+	         Statement stmt = c.createStatement();
+
+	         ResultSet rs;
+
+	            String que = ( new StringBuilder("SELECT * FROM zipcodes WHERE  ((zip Like '%")).append(zip).append("%'))").toString();	
+	            rs = stmt.executeQuery( que);           	 
+	            	  
+	            while(rs.next()) {
+	            		  
+	            	lat = rs.getDouble("latitude");
+	            	lon = rs.getDouble("longitude");	            				  
+	            				  
+	            	AirportBean entry = new AirportBean( rs.getInt("zip"), rs.getString( "city" ), rs.getString( "state" ),
+	  	            			rs.getDouble("latitude"), rs.getDouble("longitude"), rs.getInt("timezone"), rs.getBoolean("dst"));
+	  	            zipcodes.add( entry );            		
+		        }
+	    			               	  
+	  	     ResultSet rs2;
+	            	  
+	            String query = ("SELECT * FROM Airports"); //( new StringBuilder("SELECT * FROM Airports WHERE  ((latitude Like '%")).append(lat).append("%') OR (longitude Like '%").append(lon).append("%'))").toString();	
+	            rs2 = stmt.executeQuery( query );
+	            
+	            //r = r + 3400;
+	            while(rs2.next()) {
+	            	double lat2 = rs2.getDouble("latitude");
+                    double lon2 = rs2.getDouble("longitude");
+                    double dis = getDis(lat, lat2, lon, lon2);
+                    if(dis <= r)
+                    {
+                    	size++;
+                    	AirportBean2 entry = new AirportBean2( rs2.getString( "airport" ), rs2.getDouble("latitude"), rs2.getDouble("longitude"));
+                    	airports.add( entry );
+                    }
+	            }
+	            
+	        }
+	        catch( SQLException e )
+	        {
+	            throw new ServletException( e );
+	        }
+	        finally
+	        {
+	            try
+	            {
+	                if( c != null ) c.close();
+	            }
+	            catch( SQLException e )
+	            {
+	                throw new ServletException( e );
+	            }
+	        }
+		 
+		 request.setAttribute( "airports", airports );
+		 request.setAttribute( "size", size );
+		 
+		 request.getRequestDispatcher( "./AirportLocator.jsp" ).forward(request, response );	
+    }
+	
+    private double getDis(double lat1, double lat2, double lng1, double lng2)
+    {
+    	 double earthRadius = 3958.75; // miles (or 6371.0 kilometers)
+    	    double dLat = Math.toRadians(lat2-lat1);
+    	    double dLng = Math.toRadians(lng2-lng1);
+    	    double sindLat = Math.sin(dLat / 2);
+    	    double sindLng = Math.sin(dLng / 2);
+    	    double a = Math.pow(sindLat, 2) + Math.pow(sindLng, 2)
+    	            * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
+    	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    	    double dist = earthRadius * c;
+
+    	    return dist;
+        /*lat1 = (lat1 / 180D) * 3.1415926535897931D;
+        lat2 = (lat2 / 180D) * 3.1415926535897931D;
+        lng1 = (lng1 / 180D) * 3.1415926535897931D;
+        lng2 = (lng2 / 180D) * 3.1415926535897931D;
+        double earthR = 3959D;
+        double alng = Math.abs(lng1 - lng2);
+        double sinlat1 = Math.sin(lat1);
+        double sinlat2 = Math.sin(lat2);
+        double coslat1 = Math.cos(lat1);
+        double coslat2 = Math.cos(lat2);
+        return earthR * Math.acos(sinlat1 * sinlat2 + coslat1 * coslat2 * Math.cos(alng));*/
+    }
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+
+	}
+
+
+}

@@ -1,0 +1,160 @@
+package cs320.midterm;
+
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import cs320.midterm.*;
+
+
+@WebServlet("/midterm/AddServlet")
+public class AddServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	int id = 4 ;
+       
+	boolean isValidName = true;
+	boolean isValidDescription = true;
+	boolean isValidPrice = true;
+	boolean isValidQuantity = true;
+	
+    public AddServlet() {
+        super();
+
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		ArrayList<InventoryItem> items = (ArrayList<InventoryItem>)getServletContext().getAttribute("items");
+				
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+
+		out.println("<!doctype html>");
+		out.println("<html>");
+		out.println("<head>");
+		out.println("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>");
+		out.println("</head>");
+		
+		out.println("<body>");
+		out.println("<div class='container'>");
+		out.println("<h1>Add Servlet<small> CS320 Midterm</small></h1><hr />");
+		out.println("<form action='AddServlet' method='post'>");
+
+		if (!isValidName)
+		out.println("   <p class='text-danger'>Enter a valid name!</p>");
+		out.print("<h4>Name</h4>");
+		out.print("   <input name='name' ");
+		
+		if (request.getParameter("name") != null && isValidName)
+		out.print(" value='" + request.getParameter("name") + "' ");
+		out.println(" type='text' class='form-control' placeholder='Enter your name'><br />");
+
+		if (!isValidDescription)
+		out.println("   <p class='text-danger'>Enter a valid Description</p>");
+		out.print("<h4>Description</h4>");
+		out.print("   <input name='description' ");
+		
+		if (request.getParameter("description") != null && isValidDescription)
+		out.print(" value='" + request.getParameter("description") + "' ");
+		out.println(" type='text' class='form-control' placeholder='Enter the description'><br />");
+
+		if (isValidPrice)
+		out.println("   <p class='text-danger'>Enter a valid Price</p>");
+		out.print("<h4>Price</h4>");
+		out.print("   <input name='price' ");
+		
+		if (request.getParameter("price") != null && isValidPrice)
+		out.print(" value='" + request.getParameter("price") + "' ");
+		out.println(" type='text' class='form-control' placeholder='Enter price of an Inventory'><br />");
+		
+		if (!isValidQuantity)
+		out.println("   <p class='text-danger'>Enter a valid Quantity</p>");
+		out.print("<h4>Quantity</h4>");
+		out.print("   <input name='quantity' ");
+			
+		if (request.getParameter("quantity") != null && isValidQuantity)
+		out.print(" value='" + request.getParameter("quantity") + "' ");
+		out.println(" type='text' class='form-control' placeholder='Enter the quantity'><br />");
+
+		out.println("   <input type='submit' class='btn btn-default' value='Add'>");
+			
+	}
+
+
+	@SuppressWarnings("unchecked")
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		 	String name = request.getParameter("name");
+	        String description = request.getParameter("description");
+	        String p = request.getParameter("price");
+			String q = request.getParameter("quantity");
+			
+			double price = 0;
+			int quantity = 0;
+			try{
+				price = Double.parseDouble(p);
+				quantity = Integer.parseInt(q);
+			}catch(Exception e) {
+	        	System.out.println(e);
+	        }
+			if (request.getParameter("name") != null) {
+				if (request.getParameter("name").trim().length() == 0)
+					isValidName = false;
+			}
+
+			if (request.getParameter("description") != null) {
+				if (request.getParameter("description").trim().length() == 0)
+					isValidDescription = false;
+			}
+
+			if (request.getParameter("price") != null) {
+				 //if(!request.getParameter("price").matches("([0-9]"))
+					isValidPrice = false;
+			}
+			
+			if (request.getParameter("quantity") != null) {
+				 if(!request.getParameter("quantity").matches("[0-9]"))
+					isValidPrice = false;
+			}
+
+			if(name != null && description != null && p != null && q != null )
+	        {
+	            if(!isValidName && !isValidDescription && !isValidPrice && !isValidQuantity)
+	            {
+	        		ArrayList<InventoryItem> items = (ArrayList<InventoryItem>)getServletContext().getAttribute("items");
+	                items.add(new InventoryItem(++id, name, description, price, quantity));
+
+	                response.sendRedirect("./midterm/StoreAdminServlet");
+	            } else
+	            {
+	                doGet(request, response);
+	            }
+	        } else
+	        {
+	            doGet(request, response);
+	        }	    
+
+	}
+	
+/*    public static boolean isValidPrice(String p)
+    {
+        if(p.trim().length() > 0)
+        {
+        	Pattern isDouble = Pattern.compile("\\d+\\.\\d+");
+            return isDouble.matcher(p).matches();
+        } else{
+        return false;
+        }
+    }*/
+
+}

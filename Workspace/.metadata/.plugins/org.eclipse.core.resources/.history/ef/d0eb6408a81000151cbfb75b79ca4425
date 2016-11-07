@@ -1,0 +1,111 @@
+package cs320.finalexam;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet("/Lend")
+public class Lend extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+   
+    public Lend() {
+        super();
+
+    }
+
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ArrayList<LibraryBean> cdata = new ArrayList<LibraryBean>();
+		Connection c = null;
+		String lend = request.getParameter("id");
+
+		int lendID = 0;
+        
+        
+        try
+        {
+            lendID = Integer.parseInt(lend);
+        }
+        catch(Exception e)
+        {
+           response.sendRedirect("ViewLibrary");
+        }
+        String name = request.getParameter("name");
+        
+        
+		 try
+	        {
+			 String url = "jdbc:mysql://cs3.calstatela.edu:3306/cs320stu43";
+	         String username = "cs320stu43";
+	         String password = "cOdJJKy!";
+		        
+
+	            c = DriverManager.getConnection( url, username, password );
+	            Statement stmt = c.createStatement();
+	            String query = (new StringBuilder("SELECT * FROM media WHERE Id = ")).append(lendID).toString();
+	            ResultSet rs = stmt.executeQuery( query );
+
+	            while( rs.next() )
+	            {
+	            	LibraryBean entry = new LibraryBean( rs.getInt( "Id" ), rs.getString( "Type" ), rs.getString( "Name" ), rs.getDate("DateAdded"), rs.getBoolean("OnLoan"), rs.getDate("DateBorrowed"), rs.getString("Borrower"));
+	                cdata.add( entry );
+	            }
+	            
+	            if(name != null)
+	            {
+	                query = (new StringBuilder("UPDATE MediaLibrary Set OnLoan = false, DateBorrowed = CURRENT_DATE(), Borrower = '")).append(name).append("' WHERE Id = ").append(lendID).toString();
+	                stmt.executeUpdate(query);
+	                stmt.close();
+	                System.out.println(query);
+	                response.sendRedirect("ViewLibrary");	               
+	            }
+	            
+	            
+	        }
+	        catch( SQLException e )
+	        {
+	            throw new ServletException( e );
+	        }
+	        finally
+	        {
+	            try
+	            {
+	                if( c != null ) c.close();
+	            }
+	            catch( SQLException e )
+	            {
+	                throw new ServletException( e );
+	            }
+	        }
+		 request.setAttribute("id", lendID);
+		 request.setAttribute( "cdata", cdata );
+		 try{
+			 
+		 
+		       request.getRequestDispatcher( "/Lend.jsp" ).forward(
+	            request, response );
+		 }catch(Exception e)
+		 {
+		 System.out.println(e);
+		 }
+		
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	}
+
+}

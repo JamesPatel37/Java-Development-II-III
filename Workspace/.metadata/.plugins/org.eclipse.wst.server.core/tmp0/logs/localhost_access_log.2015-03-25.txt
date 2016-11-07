@@ -1,0 +1,7 @@
+127.0.0.1 - - [25/Mar/2015:23:02:09 -0700] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [25/Mar/2015:23:02:10 -0700] "GET /webtest/servlet/homework1.Register HTTP/1.1" 404 1019
+127.0.0.1 - - [25/Mar/2015:23:10:17 -0700] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [25/Mar/2015:23:10:18 -0700] "GET /webtest/Homework1/Register HTTP/1.1" 200 1219
+0:0:0:0:0:0:0:1 - - [25/Mar/2015:23:11:13 -0700] "POST /webtest/Homework1/Register HTTP/1.1" 302 -
+0:0:0:0:0:0:0:1 - - [25/Mar/2015:23:11:13 -0700] "GET /webtest/Homework1/Register?success=SUCCESS HTTP/1.1" 200 282
+0:0:0:0:0:0:0:1 - - [25/Mar/2015:23:11:16 -0700] "GET /webtest/Homework2/Login HTTP/1.1" 500 3624
