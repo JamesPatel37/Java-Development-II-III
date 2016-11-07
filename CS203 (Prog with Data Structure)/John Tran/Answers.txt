@@ -1,0 +1,59 @@
+ANSWERS:
+
+[1] (a) Provide an example of "has-a" relationship and an example of "is-a" relationship.
+		Discuss why a "has-a" relationship impose tighter bonding than a "uses-a" relationship.
+
+ANS:  
+	"is-a"
+	class Building { 
+	.......
+	} 
+  
+	class House extends Building { 
+	.........
+	}
+
+	"has-a" -- House has a bathroom 
+
+	class House
+	{
+		Bathroom room = new Bathroom() ;
+		....
+	public void getTotMirrors()
+	{
+		room.getNoMirrors();
+		....
+	}
+	
+
+
+(b) When should one use exception handling? When would one not use exception handling?
+
+ANS: One should use exception handling to enables a method to throw an exception. 
+	 One should not use exception handling in 
+
+(c) What is the russian doll with regards to Java programming? What is its advantage?
+
+ANS: The prime numbers whose right digit can be repeatedly removed, and are still prime are known as russian doll.
+	
+(d) Discuss how interface and abstract classes are contractual obligations between a programmer and a library writer.
+
+ANS:
+
+
+[2] Regarding the course policy on academic integrity, which of the following action is considered cheating:
+
+ANS: (d) All of the above
+
+
+[3] If caught cheating, which of the following is a consequence specific to this course?
+
+ANS: (b) Receiving an F on the assignment/exam
+					OR
+	 (c) Receiving an F for the course
+
+
+
+[4] I did not cheat on this quiz
+
+ANS: (a) true

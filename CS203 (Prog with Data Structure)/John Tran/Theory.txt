@@ -1,0 +1,31 @@
+Theory Questions:-
+-----------------
+
+[1] In the CircularStringQueue program, please estimate the time complexity for insert (enqueue), remove (dequeue), rotate left, and rotate right. Show (discuss) your work for credit.
+
+Ans:-
+
+
+
+
+
+
+[2] The three possible time complexity for accessing a map key are O(n), O(log n) and O(c) . Provide an explanation as to why this is the case.
+
+Ans:-
+
+Case 1: Worst Case, Time Complexity = O(n)
+
+Here, in the worst case, the hash Map is not sorted. Due to unsorted Map, in order to perform some function like insert min(), delete max(), it has to examine all the keys in the map more than once.
+Therefore, if the no. of keys in map is n, the time complexity of the worst case is O(n).
+
+
+Case 2: Average Case, Time Complexity = O(log n)
+
+In Average case, the time taken to solve the problem depends on how much is the map sorted. Therefore, the average time will be log n.
+So, the time complexity of Average Case is O(log n).
+
+
+Case 3: Best Case, Time Complexity = O(c)
+Here, in the Best case, the hash Map is sorted. Due to sorted Map, in order to perform some function, it examine all the keys in the map just once. 
+Here, the time taken is least and therefore, the time complexity of the Best case is O(c).
